@@ -1,20 +1,20 @@
 import requests
 import os
-from dotenv import load_dotenv
+import allure
 
-load_dotenv()
 
-my_token = os.getenv("myToken")
-eventId = os.getenv("eventId")
+my_token = os.getenv("MY_TOKEN")
+eventId = os.getenv("COOKIE")
 base_url = "https://api-teachers.skyeng.ru"
 assert my_token, "токен ненайден"
 
 # Создать личное событие
+@allure.feature("Создание личного события")
 def test_create_company():
     my_headers = {
         "Content-Type": "application/json",
         "Cookie": f"token_global={my_token}",
-        # "Authorization": f"Bearer {my_token}"
+        "Authorization": f"Bearer {my_token}"
     }
     body = {
         "backgroundColor": "#FFF7C7",
