@@ -1,155 +1,86 @@
 import os
-from os import rename
-from time import sleep
+import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
-
+from page.page_ui import SchedulePage
+import allure
 load_dotenv()
+URL = "https://teachers.skyeng.ru/schedule"
+COOKIE_VALUE = os.getenv("COOKIE")
 
-url = "https://teachers.skyeng.ru/schedule"
-cookie = os.getenv("COOKIE")
+def setup_driver_with_cookie():
+    driver = webdriver.Chrome()
+    driver.get("https://teachers.skyeng.ru")
+    """Применяем куки перед рефрешем"""
+    driver.add_cookie({
+        "name": "session_global",
+        "value": COOKIE_VALUE,
+        "domain": "skyeng.ru"
+    })
+    driver.refresh()
+    return driver
 
 
-#создать событие на русском языке
+@allure.feature("ТЕСТ")
+@allure.story("Создание события")
+@allure.title("Создание личного события на русском языке")
 def test_create_rus_event():
-    driver = webdriver.Chrome()
-    wait = WebDriverWait(driver, 10)
-    driver.get("https://teachers.skyeng.ru")
-    driver.add_cookie({
-            "name": "session_global",
-            "value": cookie,
-            "domain": "skyeng.ru"
-        })
-    driver.refresh()
+    driver = setup_driver_with_cookie()
+    try:
+        page = SchedulePage(driver)
+        page.create_event(title="Дипломка")
+        time.sleep(1)
+    finally:
+        driver.quit()
 
-    add_btn = wait.until(EC.element_to_be_clickable((By.NAME, "add")))
-    add_btn.click()
-
-    personal_event = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'Личное событие')]"))
-        )
-    personal_event.click()
-
-    title_field = wait.until(
-            EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='Например: посмотреть вебинар']"))
-        )
-    title_field.send_keys("Дипломка")
-
-    save_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(@class, '-type-primary') and contains(@class, '-color-brand')]"))
-        )
-    save_btn.click()
-    sleep(1)
-    driver.quit()
-#Создание события с названием и описанием на английском языке
+@allure.feature("ТЕСТ")
+@allure.story("Создание события")
+@allure.title("Создание личного события на с названием и описанием на английском")
 def test_create_eng_event():
-    driver = webdriver.Chrome()
-    wait = WebDriverWait(driver, 10)
-    driver.get("https://teachers.skyeng.ru")
-    driver.add_cookie({
-            "name": "session_global",
-            "value": cookie,
-            "domain": "skyeng.ru"
-        })
-    driver.refresh()
+    driver = setup_driver_with_cookie()
+    try:
+        page = SchedulePage(driver)
+        page.create_event(title="Diploma", description="Final work")
+        time.sleep(1)
+    finally:
+        driver.quit()
 
-    add_btn = wait.until(EC.element_to_be_clickable((By.NAME, "add")))
-    add_btn.click()
+@allure.feature("ТЕСТ")
+@allure.story("Изменение масштаба")
+@allure.title("Изменение масштаба интерфейса")
+def test_change_name_event():
+    driver = setup_driver_with_cookie()
+    try:
+        driver.maximize_window()
+        page = SchedulePage(driver, wait_time=5)
+        page.change_scale()
+        time.sleep(1)
+    finally:
+        driver.quit()
 
-    personal_event = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'Личное событие')]"))
-        )
-    personal_event.click()
+@allure.feature("ТЕСТ")
+@allure.story("Убрать видимость личных событий")
+@allure.title("Убрать галочку чтобы личные события непоказывались в расписании")
+def test_unplug_event():
+    driver = setup_driver_with_cookie()
+    try:
+        driver.maximize_window()
+        page = SchedulePage(driver, wait_time=5)
+        page.toggle_hide_personal_events()
+        time.sleep(1)
+    finally:
+        driver.quit()
 
-    title_field = wait.until(
-            EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='Например: посмотреть вебинар']"))
-        )
-    title_field.send_keys("Diploma")
+@allure.feature("ТЕСТ")
+@allure.story("Удаление события")
+@allure.title("Выбрать нужное событие и удалить")
+def test_delete_event():
+    driver = setup_driver_with_cookie()
+    try:
+        driver.maximize_window()
+        page = SchedulePage(driver, wait_time=5)
+        page.delete_event()
+        time.sleep(1)
+    finally:
+        driver.quit()
 
-    descr = wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "textarea[placeholder='Например: ссылка на вебинар']")))
-    descr.send_keys("Final work")
-
-    save_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(@class, '-type-primary') and contains(@class, '-color-brand')]"))
-        )
-    save_btn.click()
-    sleep(1)
-    driver.quit()
-
-
-#Уменьшить масштаб итерфейса
-def test_change_name_ivent():
-    driver = webdriver.Chrome()
-    wait = WebDriverWait(driver, 5)
-    driver.get(url)
-    driver.maximize_window()
-    driver.add_cookie({
-                    "name": "session_global",
-                    "value": cookie,
-                    "domain": "skyeng.ru"
-                    })
-    driver.refresh()
-    work = wait.until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, ".cog-btn")))
-    work.click()
-
-    up_name = wait.until(
-        EC.element_to_be_clickable(
-            (By.XPATH, "//li[@class='scale-option']")))
-    up_name.click()
-    sleep(1)
-    driver.quit()
-
-#Убрать видимость личных событий
-def test_unplug_ivent():
-    driver = webdriver.Chrome()
-    wait = WebDriverWait(driver, 5)
-    driver.get(url)
-    driver.maximize_window()
-    driver.add_cookie({
-                    "name": "session_global",
-                    "value": cookie,
-                    "domain": "skyeng.ru"
-                    })
-    driver.refresh()
-    work = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".cog-btn")))
-    work.click()
-
-    check = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".checkbox")))
-    check.click()
-    sleep(1)
-    driver.quit()
-
-
-
-#Удаление события
-def test_delete_ivent():
-     driver = webdriver.Chrome()
-     wait = WebDriverWait(driver,3)
-     driver.get(url)
-     driver.maximize_window()
-     driver.add_cookie({
-         "name": "session_global",
-         "value": cookie,
-         "domain": "skyeng.ru"
-     })
-     driver.refresh()
-     sleep(2)
-     clear = wait.until(
-         EC.visibility_of_element_located(
-         (By.XPATH, "(//div[@class='passed-event-cover'])[11]")))
-     clear.click()
-
-     button = wait.until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".root.-type-secondary.-color-brand.-size-m.-active"))
-     )
-     button.click()
-     sleep(2)
-     driver.quit()
