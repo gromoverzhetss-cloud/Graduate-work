@@ -1,6 +1,0 @@
-.idea/
-.venv/
-__pycache__/
-*.pyc
-test/.env
-page/__pycache__/
