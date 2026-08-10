@@ -1,10 +1,6 @@
-import os
-from dotenv import load_dotenv
+
 from page.page_ui import SchedulePage
 import allure
-load_dotenv()
-URL = "https://teachers.skyeng.ru/schedule"
-COOKIE_VALUE = os.getenv("COOKIE")
 
 
 @allure.feature("ТЕСТ")
