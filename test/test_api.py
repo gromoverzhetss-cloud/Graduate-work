@@ -121,7 +121,7 @@ def test_del_company():
      }
      with allure.step("В теле указываем ID нужного события"):
       body = {
-         "id": {eventId},
+         "id":f"{eventId}",
          "startAt": "2026-08-19T12:00:00+03:00"
      }
 

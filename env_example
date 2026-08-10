@@ -1,0 +1,3 @@
+MY_TOKEN="Здесь пишем token-global для API запросов"
+ID="Здесь id выбранного события"
+COOKIE="session-global для тестирования ui"
