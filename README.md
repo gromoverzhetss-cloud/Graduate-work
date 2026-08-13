@@ -24,7 +24,7 @@ allure serve allure-result
 
 ## markers = 
 test_api: тесты на API запросы
-          test_ui: UI тесты
+test_ui: UI тесты
 
-Ссылка на финальный проект:
+## Ссылка на финальный проект:
 https://2123123.yonote.ru/share/649c1d7c-4d4d-456e-aad2-d681f83a070a
