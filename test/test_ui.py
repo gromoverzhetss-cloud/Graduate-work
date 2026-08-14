@@ -4,7 +4,7 @@ import allure
 
 
 @allure.feature("ТЕСТ")
-@allure.story("Создание события")
+@allure.story("Создание события и удаление")
 @allure.title("Создание личного события на русском языке")
 @pytest.mark.test_ui
 def test_create_rus_event(auth):
@@ -16,7 +16,7 @@ def test_create_rus_event(auth):
 
 
 @allure.feature("ТЕСТ")
-@allure.story("Создание события")
+@allure.story("Создание события и удаление")
 @allure.title("Создание личного события на с названием и описанием на английском")
 @pytest.mark.test_ui
 def test_create_eng_event(auth):
